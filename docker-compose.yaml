@@ -1,0 +1,14 @@
+services:
+  mysql:
+    image: mysql:8.0
+    container_name: cuple-database
+    restart: no
+    ports:
+      - 3306:3306
+    environment:
+      MYSQL_DATABASE: cuple
+      MYSQL_ROOT_PASSWORD: root
+      TZ: +00:00
+    volumes:
+      - ./db/mysql/data:/var/lib/mysql
+#    platform: linux/x86_64
