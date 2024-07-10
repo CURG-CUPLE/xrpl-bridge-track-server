@@ -1,4 +1,10 @@
-import { createPublicClient, defineChain, fromHex, http } from 'viem';
+import {
+  createPublicClient,
+  defineChain,
+  fromHex,
+  http,
+  parseAbiItem,
+} from 'viem';
 import _ from 'lodash';
 import { TransactionBase } from 'viem/types/transaction';
 
@@ -35,16 +41,10 @@ describe('viem', () => {
 
   it('getTransaction', async () => {
     const transaction = await client.getTransaction({
-      hash: '0x7168d9cba11b487952d75102e30e35c44440dbd7731e84a6869a65fa0abc8296',
+      hash: '0x39bd4cff94c958211e7b4005be02d359019bd037f31599ffb834e1a4bd51b760',
     });
     console.log(transaction);
-  });
-
-  it('getTransactionReceipt', async () => {
-    const transaction = await client.getTransactionReceipt({
-      hash: '0x7168d9cba11b487952d75102e30e35c44440dbd7731e84a6869a65fa0abc8296',
-    });
-    console.log(transaction);
+    console.log(typeof transaction);
   });
 
   it('getBridgeContractTransactionByBlock', async () => {
@@ -75,5 +75,17 @@ describe('viem', () => {
       _.identity,
     );
     console.log(bridgeTransaction);
+  });
+
+  it('getLog', async () => {
+    const logs = await client.getLogs({
+      address: '0xc2a29b0cD12d146cEb42C3DABF6E4a2a39a07b86',
+      event: parseAbiItem(
+        'event Credit(bytes32 indexed bridgeKey, uint256 indexed claimId, address indexed receiver, uint256 value)',
+      ),
+      fromBlock: 9710179n,
+      toBlock: 9710179n,
+    });
+    console.log(logs);
   });
 });
