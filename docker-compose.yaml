@@ -10,5 +10,6 @@ services:
       MYSQL_ROOT_PASSWORD: root
       TZ: +00:00
     volumes:
-      - ./db/mysql/data:/var/lib/mysql
+      - ./.container/mysql/data:/var/lib/mysql
+      - ./.container/mysql/initdb.d:/docker-entrypoint-initdb.d
 #    platform: linux/x86_64
