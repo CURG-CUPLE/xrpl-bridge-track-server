@@ -3,18 +3,10 @@ import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
 export class BlockchainNetworkEntity {
   @PrimaryGeneratedColumn({
     name: 'id',
-    type: 'bigint',
-    unsigned: false,
+    type: 'int',
+    unsigned: true,
   })
-  id: bigint;
-
-  @Column({
-    name: 'block_number',
-    type: 'bigint',
-    nullable: false,
-    comment: '수집이 완료된 블록 번호',
-  })
-  blockNumber: bigint;
+  id: number;
 
   @Column({
     name: 'network',
@@ -24,6 +16,15 @@ export class BlockchainNetworkEntity {
     comment: '블록체인 네트워크 이름, ex.Ethereum',
   })
   network: string;
+
+  @Column({
+    name: 'block_number',
+    type: 'bigint',
+    unsigned: true,
+    nullable: false,
+    comment: '수집이 완료된 블록 번호',
+  })
+  blockNumber: bigint;
 
   @Column({
     name: 'updated_at',

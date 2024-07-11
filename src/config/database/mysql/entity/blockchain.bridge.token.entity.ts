@@ -4,10 +4,19 @@ import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
 export class BlockchainBridgeTokenEntity {
   @PrimaryGeneratedColumn({
     name: 'id',
-    type: 'bigint',
-    unsigned: false,
+    type: 'int',
+    unsigned: true,
   })
-  id: bigint;
+  id: number;
+
+  @Column({
+    name: 'network_id',
+    type: 'int',
+    unsigned: true,
+    nullable: false,
+    comment: '코인 심볼, ex.ETH',
+  })
+  netowrkId: number;
 
   @Column({
     name: 'symbol',
@@ -16,7 +25,7 @@ export class BlockchainBridgeTokenEntity {
     nullable: false,
     comment: '코인 심볼, ex.ETH',
   })
-  txid: string;
+  symbol: string;
 
   @Column({
     name: 'contract_address',

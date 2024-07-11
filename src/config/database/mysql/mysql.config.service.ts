@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { TypeOrmModuleOptions, TypeOrmOptionsFactory } from '@nestjs/typeorm';
 import { BlockchainNetworkEntity } from './entity/blockchain.network.entity';
 import { BlockchainBridgeTokenEntity } from './entity/blockchain.bridge.token.entity';
-import { BlockchainBrideTransactionEntity } from './entity/blockchain.bride.transaction.entity';
+import { BlockchainBridgeTransactionEntity } from './entity/blockchain.bridge.transaction.entity';
 
 @Injectable()
 export class MysqlConfigService implements TypeOrmOptionsFactory {
@@ -17,7 +17,7 @@ export class MysqlConfigService implements TypeOrmOptionsFactory {
       entities: [
         BlockchainNetworkEntity,
         BlockchainBridgeTokenEntity,
-        BlockchainBrideTransactionEntity,
+        BlockchainBridgeTransactionEntity,
       ],
       synchronize: true,
     };

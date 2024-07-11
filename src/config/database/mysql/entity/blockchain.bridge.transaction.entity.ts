@@ -1,7 +1,7 @@
 import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
 
-@Entity({ name: 'blockchain_network' })
-export class BlockchainBrideTransactionEntity {
+@Entity({ name: 'blockchain_bridge_transaction' })
+export class BlockchainBridgeTransactionEntity {
   @PrimaryGeneratedColumn({
     name: 'id',
     type: 'bigint',
@@ -19,6 +19,15 @@ export class BlockchainBrideTransactionEntity {
   tokenId: number;
 
   @Column({
+    name: 'block_number',
+    type: 'bigint',
+    unsigned: true,
+    nullable: false,
+    comment: 'block number',
+  })
+  blockNumber: bigint;
+
+  @Column({
     name: 'txid',
     type: 'varchar',
     length: 128,
@@ -28,13 +37,13 @@ export class BlockchainBrideTransactionEntity {
   txid: string;
 
   @Column({
-    name: 'address',
+    name: 'to',
     type: 'varchar',
     length: 128,
     nullable: false,
-    comment: 'bridge to_address',
+    comment: 'bridge to address',
   })
-  address: string;
+  to: string;
 
   @Column({
     name: 'amount',
@@ -57,12 +66,12 @@ export class BlockchainBrideTransactionEntity {
   fee: string;
 
   @Column({
-    name: 'blocktime',
+    name: 'block_time',
     type: 'timestamp',
     nullable: false,
     comment: 'block time',
   })
-  blocktime: Date;
+  blockTime: Date;
 
   @Column({
     name: 'status',
