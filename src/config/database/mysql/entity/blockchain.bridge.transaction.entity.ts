@@ -47,39 +47,36 @@ export class BlockchainBridgeTransactionEntity {
 
   @Column({
     name: 'amount',
-    type: 'decimal',
-    precision: 65,
-    scale: 18,
+    type: 'bigint',
     nullable: false,
     comment: 'bridge amount',
   })
-  amount: string;
+  amount: bigint;
 
   @Column({
     name: 'fee',
-    type: 'decimal',
-    precision: 65,
-    scale: 18,
+    type: 'bigint',
     nullable: false,
     comment: 'bridge transaction network fee',
   })
-  fee: string;
+  fee: bigint;
 
   @Column({
     name: 'block_time',
-    type: 'timestamp',
+    type: 'bigint',
+    unsigned: true,
     nullable: false,
     comment: 'block time',
   })
-  blockTime: Date;
+  blockTime: bigint;
 
   @Column({
     name: 'status',
-    type: 'tinyint',
+    type: 'varchar',
     nullable: false,
-    comment: '트랜잭션 처리 상태(0:진행,1:성공,2:실패)',
+    comment: '트랜잭션 상태',
   })
-  status: number;
+  status: string;
 
   @Column({
     name: 'created_at',

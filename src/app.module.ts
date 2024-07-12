@@ -6,6 +6,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { BlockchainBridgeTokenEntity } from './config/database/mysql/entity/blockchain.bridge.token.entity';
 import { BlockchainNetworkEntity } from './config/database/mysql/entity/blockchain.network.entity';
 import { MysqlConfigService } from './config/database/mysql/mysql.config.service';
+import { BlockchainBridgeTransactionEntity } from './config/database/mysql/entity/blockchain.bridge.transaction.entity';
 
 @Module({
   imports: [
@@ -17,7 +18,7 @@ import { MysqlConfigService } from './config/database/mysql/mysql.config.service
     TypeOrmModule.forFeature([
       BlockchainBridgeTokenEntity,
       BlockchainNetworkEntity,
-      BlockchainNetworkEntity,
+      BlockchainBridgeTransactionEntity,
     ]),
   ],
   controllers: [AppController],

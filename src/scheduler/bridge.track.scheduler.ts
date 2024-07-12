@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { BridgeTrackSchedulerService } from './bridge.track.scheduler.service';
+import { BridgeTrackSchedulerService } from './service/bridge.track.scheduler.service';
 import { Timeout } from '@nestjs/schedule';
 
 @Injectable()
@@ -15,7 +15,7 @@ export class BridgeTrackScheduler {
       } catch (e) {
       } finally {
         await new Promise((resolve) => {
-          setTimeout(resolve, 10_000);
+          setTimeout(resolve, 30_000);
         });
       }
     }

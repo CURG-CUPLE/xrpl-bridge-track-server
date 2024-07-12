@@ -39,8 +39,23 @@ describe('viem', () => {
     console.log(blockNumber);
   });
 
+  it('getBlock', async () => {
+    const blockNumber = await client.getBlock(
+      '0x46639e0747d4ccfd7d99064498133dd4fbe31f1ac11d000293a7e9c198c3c688',
+    );
+    console.log(blockNumber);
+  });
+
   it('getTransaction', async () => {
     const transaction = await client.getTransaction({
+      hash: '0x39bd4cff94c958211e7b4005be02d359019bd037f31599ffb834e1a4bd51b760',
+    });
+    console.log(transaction);
+    console.log(typeof transaction);
+  });
+
+  it('getTransactionReceipt', async () => {
+    const transaction = await client.getTransactionReceipt({
       hash: '0x39bd4cff94c958211e7b4005be02d359019bd037f31599ffb834e1a4bd51b760',
     });
     console.log(transaction);

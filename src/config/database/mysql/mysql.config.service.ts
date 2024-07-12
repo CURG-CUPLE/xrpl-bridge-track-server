@@ -19,7 +19,7 @@ export class MysqlConfigService implements TypeOrmOptionsFactory {
         BlockchainBridgeTokenEntity,
         BlockchainBridgeTransactionEntity,
       ],
-      synchronize: true,
+      synchronize: false,
     };
   }
 }
