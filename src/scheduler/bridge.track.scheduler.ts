@@ -9,7 +9,7 @@ export class BridgeTrackScheduler {
   async bridgeTransactionTrackScheduler() {
     while (true) {
       try {
-        await this.bridgeTrackSchedulerService.getXRPbridgeTransaction();
+        await this.bridgeTrackSchedulerService.getExrpBridgeTransaction();
       } catch (e) {
         console.error(e);
       } finally {

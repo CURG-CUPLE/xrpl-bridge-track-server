@@ -1,16 +1,17 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { BlockchainBridgeTransactionEntity } from '../../config/database/mysql/entity/blockchain.bridge.transaction.entity';
 import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { BlockchainNetworkEntity } from '../../config/database/mysql/entity/blockchain.network.entity';
 import { createPublicClient, http, parseAbiItem } from 'viem';
-import { ABI_ITEM, BRIDGE_CONTRACT_ADDRESS, EVM_SIDECHAIN } from '../../constants';
+import { BRIDGE_CONTRACT_ADDRESS, EVM_SIDECHAIN } from '../../constants';
 import _ from 'lodash';
-import { from } from "rxjs";
 
 @Injectable()
 export class BridgeTrackSchedulerService {
-  clientProvider;
+  private readonly logger = new Logger(BridgeTrackSchedulerService.name);
+  private clientProvider;
+
   constructor(
     @InjectRepository(BlockchainNetworkEntity)
     private blockchainNetworkRepository: Repository<BlockchainNetworkEntity>,
@@ -23,7 +24,7 @@ export class BridgeTrackSchedulerService {
     });
   }
 
-  async getXRPbridgeTransaction() {
+  async getExrpBridgeTransaction() {
     const blockchainNetworkEntity = await this.blockchainNetworkRepository.findOne({
       where: { network: 'EVM Sidechain' },
     });
@@ -32,8 +33,8 @@ export class BridgeTrackSchedulerService {
 
     try {
       // https://viem.sh/docs/actions/public/getLogs.html
-      const logs = await this.clientProvider.getLogs({
-        address: '0xc2a29b0cD12d146cEb42C3DABF6E4a2a39a07b86',
+      const creditEventLogs = await this.clientProvider.getLogs({
+        address: BRIDGE_CONTRACT_ADDRESS,
         event: parseAbiItem(
           'event Credit(bytes32 indexed bridgeKey, uint256 indexed claimId, address indexed receiver, uint256 value)',
         ),
@@ -41,7 +42,7 @@ export class BridgeTrackSchedulerService {
         toBlock: fromBlock + 5n,
       });
 
-      const promise = _.map(logs, async (v: any) => {
+      const eventParseResults = _.map(creditEventLogs, async (v: any) => {
         try {
           const transaction = await this.clientProvider.getTransaction({
             hash: v.transactionHash,
@@ -56,7 +57,7 @@ export class BridgeTrackSchedulerService {
           const gasPrice: bigint = transaction.gasPrice;
           const gasUsed: bigint = receipt.gasUsed;
 
-          const result: Partial<BlockchainBridgeTransactionEntity> = {
+          return <Partial<BlockchainBridgeTransactionEntity>>{
             to: v.args.receiver as string,
             tokenId: 2 as number,
             amount: (v.args.value as bigint) / BigInt(10 ** 9),
@@ -68,16 +69,15 @@ export class BridgeTrackSchedulerService {
           };
           return result;
         } catch (e) {
-          console.error(`error, ${v}`);
+          this.logger.error('exrp bridge transaction parse error', this.getExrpBridgeTransaction.name, e);
           return null;
         }
       });
-      const results: Awaited<Partial<BlockchainBridgeTransactionEntity>>[] = await Promise.all(promise);
-      const bridgeTransactions = _.filter(results, _.identity);
+      const bridgeTransactions = _.filter(await Promise.all(eventParseResults), _.identity);
       await this.blockchainBridgeTransactionRepository.insert(bridgeTransactions);
       await this.blockchainNetworkRepository.update({ network: 'EVM Sidechain' }, { blockNumber: toBlock });
     } catch (e) {
-      console.error(e);
+      this.logger.error('getExrpBridgeTransaction execution error', this.getExrpBridgeTransaction.name, e);
     }
   }
 }
