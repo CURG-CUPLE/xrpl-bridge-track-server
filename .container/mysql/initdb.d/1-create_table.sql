@@ -23,11 +23,11 @@ create table blockchain_bridge_transaction
         primary key,
     token_id     int unsigned                        not null comment 'blockchain_network id',
     txid         varchar(128)                        not null comment 'transaction hash',
-    amount       bigint unsigned                    not null comment 'bridge amount',
-    fee          bigint unsigned                    not null comment 'bridge transaction network fee',
+    amount       bigint unsigned                     not null comment 'bridge amount',
+    fee          bigint unsigned                     not null comment 'bridge transaction network fee',
     block_number bigint unsigned                     not null comment 'block number',
     `to`         varchar(128)                        not null comment 'bridge to address',
     block_time   bigint unsigned                     not null comment 'block time',
-    status       tinyint                             not null comment '트랜잭션 처리 상태(0:진행,1:성공,2:실패)',
+    status       varchar(32)                         not null comment '트랜잭션 처리 상태',
     created_at   timestamp default CURRENT_TIMESTAMP not null comment '생성일시'
 );

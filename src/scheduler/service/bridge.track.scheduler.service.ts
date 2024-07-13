@@ -4,21 +4,18 @@ import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { BlockchainNetworkEntity } from '../../config/database/mysql/entity/blockchain.network.entity';
 import { createPublicClient, http, parseAbiItem } from 'viem';
-import {
-  ABI_ITEM,
-  BRIDGE_CONTRACT_ADDRESS,
-  EVM_SIDECHAIN,
-} from '../../constants';
+import { ABI_ITEM, BRIDGE_CONTRACT_ADDRESS, EVM_SIDECHAIN } from '../../constants';
 import _ from 'lodash';
+import { from } from "rxjs";
 
 @Injectable()
 export class BridgeTrackSchedulerService {
   clientProvider;
   constructor(
     @InjectRepository(BlockchainNetworkEntity)
-    private blockchainNetworkEntityRepository: Repository<BlockchainNetworkEntity>,
+    private blockchainNetworkRepository: Repository<BlockchainNetworkEntity>,
     @InjectRepository(BlockchainBridgeTransactionEntity)
-    private blockchainBridgeTransactionEntityRepository: Repository<BlockchainBridgeTransactionEntity>,
+    private blockchainBridgeTransactionRepository: Repository<BlockchainBridgeTransactionEntity>,
   ) {
     this.clientProvider = createPublicClient({
       chain: EVM_SIDECHAIN,
@@ -26,25 +23,27 @@ export class BridgeTrackSchedulerService {
     });
   }
 
-  async getEvmSidechainBridgeTransaction() {
-    // todo: xrp > evm sidechain 브릿지 트랜잭션을 수집합니다.
-    /*const blockchainNetworkEntity =
-      await this.blockchainNetworkEntityRepository.findOne({
-        where: { network: 'EVM Sidechain' },
-      });
-    const fromBlock = blockchainNetworkEntity.blockNumber + 1n;
+  async getXRPbridgeTransaction() {
+    const blockchainNetworkEntity = await this.blockchainNetworkRepository.findOne({
+      where: { network: 'EVM Sidechain' },
+    });
+    const fromBlock = BigInt(blockchainNetworkEntity.blockNumber) + 1n;
+    const toBlock = fromBlock + 5n;
 
     try {
+      // https://viem.sh/docs/actions/public/getLogs.html
       const logs = await this.clientProvider.getLogs({
-        address: BRIDGE_CONTRACT_ADDRESS,
-        event: parseAbiItem(ABI_ITEM),
+        address: '0xc2a29b0cD12d146cEb42C3DABF6E4a2a39a07b86',
+        event: parseAbiItem(
+          'event Credit(bytes32 indexed bridgeKey, uint256 indexed claimId, address indexed receiver, uint256 value)',
+        ),
         fromBlock,
         toBlock: fromBlock + 5n,
       });
 
-      const promises = _.map(logs, async (v: any) => {
+      const promise = _.map(logs, async (v: any) => {
         try {
-          const transaction = this.clientProvider.getTransaction({
+          const transaction = await this.clientProvider.getTransaction({
             hash: v.transactionHash,
           });
           const receipt = await this.clientProvider.getTransactionReceipt({
@@ -54,28 +53,31 @@ export class BridgeTrackSchedulerService {
             blockNumber: v.blockNumber,
           });
 
-          return {
-            to: v.args.receiver,
-            amount: v.args.value,
-            transactionHash: v.transactionHash,
-            blockNumber: v.blockNumber,
-            fee: transaction.gasPrice * receipt.gasUsed,
-            blockTime: block.blockTime,
-            status: receipt.status,
+          const gasPrice: bigint = transaction.gasPrice;
+          const gasUsed: bigint = receipt.gasUsed;
+
+          const result: Partial<BlockchainBridgeTransactionEntity> = {
+            to: v.args.receiver as string,
+            tokenId: 2 as number,
+            amount: (v.args.value as bigint) / BigInt(10 ** 9),
+            txid: v.transactionHash as string,
+            blockNumber: v.blockNumber as bigint,
+            fee: ((gasPrice * gasUsed) as bigint) / BigInt(10 ** 9),
+            blockTime: block.timestamp as bigint,
+            status: receipt.status as string,
           };
+          return result;
         } catch (e) {
           console.error(`error, ${v}`);
           return null;
         }
       });
-      const results = await Promise.all(promises);
+      const results: Awaited<Partial<BlockchainBridgeTransactionEntity>>[] = await Promise.all(promise);
       const bridgeTransactions = _.filter(results, _.identity);
-      console.log(bridgeTransactions);
-    } catch (e) {}*/
-  }
-
-  async getXrplBridgeTransaction() {
-    // todo: evm sidechain > xrp 브릿지 트랜잭션을 수집합니다.
-    console.log('evm-sidechain >>>> xrp 브릿지 트랜잭션을 수집합니다.');
+      await this.blockchainBridgeTransactionRepository.insert(bridgeTransactions);
+      await this.blockchainNetworkRepository.update({ network: 'EVM Sidechain' }, { blockNumber: toBlock });
+    } catch (e) {
+      console.error(e);
+    }
   }
 }

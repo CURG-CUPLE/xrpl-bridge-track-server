@@ -27,14 +27,6 @@ export class BlockchainNetworkEntity {
   blockNumber: bigint;
 
   @Column({
-    name: 'updated_at',
-    type: 'timestamp',
-    default: () => 'CURRENT_TIMESTAMP',
-    comment: '변경일시',
-  })
-  updatedAt: Date;
-
-  @Column({
     name: 'created_at',
     type: 'timestamp',
     default: () => 'CURRENT_TIMESTAMP',
