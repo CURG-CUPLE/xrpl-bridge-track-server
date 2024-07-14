@@ -1,6 +1,10 @@
 import { defineChain } from 'viem';
 
 export const BRIDGE_CONTRACT_ADDRESS = '0xc2a29b0cD12d146cEb42C3DABF6E4a2a39a07b86';
+export const BRIDGE_CONTRACT_CREDIT_ABI =
+  'event Credit(bytes32 indexed bridgeKey, uint256 indexed claimId, address indexed receiver, uint256 value)';
+export const BRIDGE_CONTRACT_COMMIT_ABI =
+  'event Commit(bytes32 indexed bridgeKey, uint256 indexed claimId, address indexed sender, uint256 value, address receiver)';
 
 export const EVM_SIDECHAIN = defineChain({
   id: 1440001,
