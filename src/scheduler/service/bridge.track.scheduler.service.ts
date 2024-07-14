@@ -39,8 +39,9 @@ export class BridgeTrackSchedulerService {
           'event Credit(bytes32 indexed bridgeKey, uint256 indexed claimId, address indexed receiver, uint256 value)',
         ),
         fromBlock,
-        toBlock: fromBlock + 5n,
+        toBlock,
       });
+      this.logger.log(`creditEventLogs size: ${creditEventLogs}[${fromBlock}-${toBlock}] `);
 
       const eventParseResults = _.map(creditEventLogs, async (v: any) => {
         try {
@@ -67,7 +68,6 @@ export class BridgeTrackSchedulerService {
             blockTime: block.timestamp as bigint,
             status: receipt.status as string,
           };
-          return result;
         } catch (e) {
           this.logger.error('exrp bridge transaction parse error', this.getExrpBridgeTransaction.name, e);
           return null;
