@@ -12,4 +12,5 @@ services:
     volumes:
       - ./.container/mysql/data:/var/lib/mysql
       - ./.container/mysql/initdb.d:/docker-entrypoint-initdb.d
+      - ./.container/mysql/conf.d:/etc/mysql/conf.d
 #    platform: linux/x86_64
