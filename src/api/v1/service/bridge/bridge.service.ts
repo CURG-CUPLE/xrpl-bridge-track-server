@@ -1,11 +1,18 @@
 import { Injectable } from '@nestjs/common';
+import { InjectRepository } from "@nestjs/typeorm";
+import { BlockchainBridgeTransaction } from "../../../../entities/blockchain-bridge-transaction.entity";
+import { Repository } from "typeorm";
 
 @Injectable()
 export class BridgeService {
-  constructor() {}
+  constructor(
+    @InjectRepository(BlockchainBridgeTransaction)
+    private readonly blockchainBridgeTransactionRepository: Repository<BlockchainBridgeTransaction>,
+  ) {}
 
-  async getliquidity(): Promise<string> {
-    return '0.0';
+  async getLiquidity(): Promise<string> {
+    const transaction = await this.blockchainBridgeTransactionRepository.findOne({
+    })
+    return "0"
   }
-
 }

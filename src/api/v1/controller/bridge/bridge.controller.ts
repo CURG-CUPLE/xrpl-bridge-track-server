@@ -5,8 +5,8 @@ import { BridgeService } from '../../service/bridge/bridge.service';
 export class BridgeController {
   constructor(private readonly bridgeService: BridgeService) {}
 
-  @Get('/liquidity')
-  async getHello(): Promise<string> {
-    return await this.bridgeService.getliquidity();
+  @Get('/api/v1/liquidity')
+  async getLiquidity(): Promise<string> {
+    return await this.bridgeService.getLiquidity();
   }
 }

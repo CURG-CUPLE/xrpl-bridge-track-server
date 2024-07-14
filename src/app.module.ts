@@ -8,7 +8,6 @@ import { LoggerMiddleware } from './api/middleware/logger.middleware';
 import { LoggerModule } from './config/logger/logger.module';
 import { AllExceptionFilter } from './api/filter/all.exception.filter';
 import { entities } from './config/database/mysql/entity';
-
 @Module({
   imports: [
     BridgeTrackSchedulerModule,
