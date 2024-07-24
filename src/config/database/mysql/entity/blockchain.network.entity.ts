@@ -13,7 +13,7 @@ export class BlockchainNetworkEntity {
     type: 'varchar',
     length: 32,
     nullable: false,
-    comment: '블록체인 네트워크 이름, ex.Ethereum',
+    comment: '블록체인 네트워크 이름, ex.XRP',
   })
   network: string;
 

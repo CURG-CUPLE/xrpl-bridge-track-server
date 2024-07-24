@@ -10,13 +10,13 @@ export class BlockchainBridgeTransactionEntity {
   id: bigint;
 
   @Column({
-    name: 'token_id',
+    name: 'network_id',
     type: 'int',
     unsigned: true,
     nullable: false,
     comment: 'blockchain_network.id',
   })
-  tokenId: number;
+  networkId: number;
 
   @Column({
     name: 'block_number',
@@ -47,19 +47,23 @@ export class BlockchainBridgeTransactionEntity {
 
   @Column({
     name: 'amount',
-    type: 'bigint',
+    type: 'decimal',
+    precision: 65,
+    scale: 18,
     nullable: false,
     comment: 'bridge amount',
   })
-  amount: bigint;
+  amount: string;
 
   @Column({
     name: 'fee',
-    type: 'bigint',
+    type: 'decimal',
+    precision: 65,
+    scale: 18,
     nullable: false,
     comment: 'bridge transaction network fee',
   })
-  fee: bigint;
+  fee: string;
 
   @Column({
     name: 'block_time',
